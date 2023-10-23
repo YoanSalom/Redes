@@ -9,13 +9,14 @@ pygame.display.set_caption("BattleShip Yaxel")
 reloj = pygame.time.Clock()
 
 # Colores
+#ROJO= MISS, Amarillo = HIT, AZUL = AGUA
 morado = (150, 0, 150)
 blanco = (255, 255, 255)
 negro = (0,0,0)
 rojo = (255,0,0)
 azul = (0,255,255)
 amarillo = (255, 128, 0)
-verde = (0,255,0)
+verde = (0,155,0)
 WHITE = (255, 255, 255)
 ORANGE = (255, 165, 0)
 PURPLE = (128, 0, 128)
@@ -71,9 +72,13 @@ matriz2= [
     [1, 1, 1, 1, 1]
 ]
 
-
 # Fuente
 font = pygame.font.Font(None, 36)
+
+# Función para contar elementos distintos de 0 en la matriz
+def contar_elementos_distintos_de_cero(matriz):
+    count = sum(1 for fila in matriz for elemento in fila if elemento != 0)
+    return count
 
 # Función para dibujar botones
 def draw_button(screen, text, position, width, height, color, text_color, action):
@@ -94,6 +99,27 @@ def draw_button(screen, text, position, width, height, color, text_color, action
     if x + width > mouse[0] > x and y + height > mouse[1] > y:
         if click[0] == 1 and action is not None:
             action()
+def validar():
+    
+    # Dibuja el botón
+    pygame.draw.rect(ventana, verde, (100, 100, 100, 50))
+    text_surface = font.render("Verificar", True, blanco)
+    text_rect = text_surface.get_rect(center=(150, 125))
+    ventana.blit(text_surface, text_rect)
+    
+    # Verifica si se cumple la condición
+    if contar_elementos_distintos_de_cero(matriz1) == 6:
+        mensaje = "Cumple la condición"
+        color_mensaje = verde
+        draw_button(ventana, "PvP", (200, 500), 200, 100, PURPLE, WHITE, start_pvp_mode)
+        draw_button(ventana, "PvE", (600, 500), 200, 100, ORANGE, WHITE, start_pve_mode)
+    else:
+        mensaje = "No cumple la condición"
+        color_mensaje = rojo
+    
+    mensaje_surface = font.render(mensaje, True, color_mensaje)
+    mensaje_rect = mensaje_surface.get_rect(center=(150, 50))
+    ventana.blit(mensaje_surface, mensaje_rect)
 
 
 
@@ -101,7 +127,7 @@ def draw_button(screen, text, position, width, height, color, text_color, action
 pygame.display.set_caption("Imagen desde PC")
 
 # Ruta de tu imagen local
-ruta_de_tu_imagen = "C:/Users/Yoan/Desktop/Redes/src/descarga.jpg"  
+ruta_de_tu_imagen = "C:/Users/Yaxel/Desktop/Redes/Redes/src/descarga.jpg"  
 # Cargar la imagen desde tu PC
 image = pygame.image.load(ruta_de_tu_imagen)
 
@@ -116,10 +142,7 @@ def start_pve_mode():
     global modo_seleccionado, mostrar_botones
     modo_seleccionado = "PvE"
     mostrar_botones = False
-def build_mode():
-      global modo_seleccionado, mostrar_botones
-      modo_seleccionado = "Construccion"
-      mostrar_botones = False
+
 
 
 # Variables para almacenar la elección del jugador y si los botones deben mostrarse
@@ -150,6 +173,7 @@ def main():
                                 # Cambiar el color de la celda clickeada
                         if 0 <= fila < filas and 0 <= columna < columnas:
                             matriz1[fila][columna] = 1 - matriz1[fila][columna]  # Cambia entre 0 y 1
+                        
 
                 for fila in range(filas):
                     for columna in range(columnas):
@@ -163,13 +187,13 @@ def main():
                                         
                         
                         #matriz de color con su marco
-                        pygame.draw.rect(ventana, rojo, (x+columna * ancho_celda, y+fila * alto_celda, ancho_celda, alto_celda))
+                        pygame.draw.rect(ventana, verde, (x+columna * ancho_celda, y+fila * alto_celda, ancho_celda, alto_celda))
                         pygame.draw.rect(ventana, azul, celda_rect)
                         pygame.draw.rect(ventana, negro, celda_rect, grosor_borde)
                         pygame.draw.rect(ventana, negro, (x+columna * ancho_celda, y+fila * alto_celda, ancho_celda, alto_celda), grosor_borde)
-  
-                    draw_button(ventana, "PvP", (200, 500), 200, 100, PURPLE, WHITE, start_pvp_mode)
-                    draw_button(ventana, "PvE", (600, 500), 200, 100, ORANGE, WHITE, start_pve_mode)
+                
+                validar()
+
 
                 # Verifica la elección del jugador y cambia el fondo en consecuencia
                 #inicio pvp
@@ -192,8 +216,8 @@ def main():
 
                 ventana.fill(morado)
                 pygame.draw.rect(ventana, amarillo, (0,0,550,2000))
-                dibujar_barra_de_vida(ventana, 50, 100, vida_user, "Vida Usuario")
-                dibujar_barra_de_vida(ventana, 600, 100, vida_rival, "Vida Rival")
+                dibujar_barra_de_vida(ventana, 50, 200, vida_user, "Vida Usuario")
+                dibujar_barra_de_vida(ventana, 600, 200, vida_rival, "Vida Rival")
 
                 #reemplazar martriz con la anterior ya construida
                 for fila in range(filas):
@@ -212,22 +236,6 @@ def main():
                         pygame.draw.rect(ventana, azul, celda_rect)
                         pygame.draw.rect(ventana, negro, celda_rect, grosor_borde)
                         pygame.draw.rect(ventana, negro, (x+columna * ancho_celda, y+fila * alto_celda, ancho_celda, alto_celda), grosor_borde)
-
-                # for fila in range(filas):
-                #     for columna in range(columnas):
-                #         if matriz2[fila][columna] == 1:
-                #                         celda_rect2 = pygame.Rect(
-                #                         z + columna * ancho_celda,
-                #                         y + fila * alto_celda,
-                #                 ancho_celda,
-                #                 alto_celda
-                #             )
-                #         #matriz de color con su marco
-                #         pygame.draw.rect(ventana, rojo, (z + columna * ancho_celda, y+fila * alto_celda, ancho_celda, alto_celda))
-                #         pygame.draw.rect(ventana, azul, celda_rect2)
-                #         pygame.draw.rect(ventana, negro, celda_rect2, grosor_borde)
-                #         pygame.draw.rect(ventana, negro, (z + columna * ancho_celda, y+fila * alto_celda, ancho_celda, alto_celda), grosor_borde)
-
 
 
             elif modo_seleccionado == "PvE":

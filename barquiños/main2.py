@@ -5,7 +5,7 @@ from pygame.locals import *
 # Configuración de pygame
 pygame.init()
 ventana = pygame.display.set_mode((1024, 700))
-pygame.display.set_caption("BattleShip Yaxel")
+pygame.display.set_caption("BattleShip Yoan")
 reloj = pygame.time.Clock()
 
 # Colores
@@ -53,7 +53,8 @@ alto_celda = 50
 #posicion inicial 
 x = 720
 y = 150
-z = 720
+z = 80
+w = 50
 
 # Matriz Usuario
 matriz1 = [
@@ -65,11 +66,11 @@ matriz1 = [
 ]
 # Matriz Enemigo
 matriz2= [
-    [1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1]
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0]
 ]
 
 # Fuente
@@ -124,12 +125,7 @@ def validar():
 
 
 
-pygame.display.set_caption("Imagen desde PC")
 
-# Ruta de tu imagen local
-ruta_de_tu_imagen = "C:/Users/Yaxel/Desktop/Redes/Redes/src/descarga.jpg"  
-# Cargar la imagen desde tu PC
-image = pygame.image.load(ruta_de_tu_imagen)
 
 
 # Funciones para iniciar el juego en diferentes modos
@@ -158,7 +154,6 @@ def main():
 
             # Limpiar la pantalla
             ventana.fill(WHITE)
-            ventana.blit(image, (1024 // 2 - image.get_width() // 2, 100 // 2 - image.get_height() // 2))
                 # Si los botones deben mostrarse, dibújalos
             
             if mostrar_botones:
@@ -207,7 +202,7 @@ def main():
                             
                             # Calcular la fila y columna de la celda clickeada
                             fila = (j - y) // alto_celda
-                            columna = (i - x) // ancho_celda
+                            columna = (i - w) // ancho_celda
 
                             # Cambiar el color de la celda clickeada
                             if 0 <= fila < filas and 0 <= columna < columnas:  # Cambia entre 0 y 1
@@ -218,7 +213,7 @@ def main():
                 pygame.draw.rect(ventana, amarillo, (0,0,550,2000))
                 dibujar_barra_de_vida(ventana, 50, 200, vida_user, "Vida Usuario")
                 dibujar_barra_de_vida(ventana, 600, 200, vida_rival, "Vida Rival")
-
+                #matriz de las posiciones del usuario, pero invisibles
                 #reemplazar martriz con la anterior ya construida
                 for fila in range(filas):
                     for columna in range(columnas):
@@ -236,6 +231,25 @@ def main():
                         pygame.draw.rect(ventana, azul, celda_rect)
                         pygame.draw.rect(ventana, negro, celda_rect, grosor_borde)
                         pygame.draw.rect(ventana, negro, (x+columna * ancho_celda, y+fila * alto_celda, ancho_celda, alto_celda), grosor_borde)
+                #matriz de posiciones de envio al servidor
+
+                for fila in range(filas):
+                    for columna in range(columnas):
+                        if matriz2[fila][columna] == 0:
+                                        celda_rect = pygame.Rect(
+                                        w + columna * ancho_celda,
+                                        y + fila * alto_celda,
+                                ancho_celda,
+                                alto_celda
+                            )
+                                        
+                        
+                        #matriz de color con su marco
+                        pygame.draw.rect(ventana, rojo, (w+columna * ancho_celda, y+fila * alto_celda, ancho_celda, alto_celda))
+                        pygame.draw.rect(ventana, azul, celda_rect)
+                        pygame.draw.rect(ventana, negro, celda_rect, grosor_borde)
+                        pygame.draw.rect(ventana, negro, (w+columna * ancho_celda, y+fila * alto_celda, ancho_celda, alto_celda), grosor_borde)
+                
 
 
             elif modo_seleccionado == "PvE":
